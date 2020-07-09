@@ -4,7 +4,7 @@ Enables [candid-kt](https://github.com/seniorjoinu/candid-kt) into Gradle pipeli
 
 #### Install
 
-```
+```groovy
 // build.gradle
 
 plugins {
