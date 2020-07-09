@@ -13,7 +13,7 @@ gradlePlugin {
     plugins {
         create("candidKt") {
             id = "com.github.seniorjoinu.candid"
-            implementationClass = "com.gihub.seniorjoinu.candid.plugin.CandidKtPlugin"
+            implementationClass = "com.github.seniorjoinu.candid.plugin.CandidKtPlugin"
         }
     }
 }
@@ -30,37 +30,14 @@ dependencies {
 }
 
 pluginBundle {
-    // These settings are set for the whole plugin bundle
-    website = "http://www.gradle.org/"
-    vcsUrl = "https://github.com/gradle/gradle"
-
-    // tags and description can be set for the whole bundle here, but can also
-    // be set / overridden in the config for specific plugins
-    description = "Greetings from here!"
-
-    // The plugins block can contain multiple plugin entries.
-    //
-    // The name for each plugin block below (greetingsPlugin, goodbyePlugin)
-    // does not affect the plugin configuration, but they need to be unique
-    // for each plugin.
-
-    // Plugin config blocks can set the id, displayName, version, description
-    // and tags for each plugin.
-
-    // id and displayName are mandatory.
-    // If no version is set, the project version will be used.
-    // If no tags or description are set, the tags or description from the
-    // pluginBundle block will be used, but they must be set in one of the
-    // two places.
+    vcsUrl = "https://github.com/seniorjoinu/candid-kt-gradle-plugin"
+    website = "https://github.com/seniorjoinu/candid-kt"
+    description = "Gradle plugin that lets you use candid-kt code generator as a Gradle configurable task"
+    tags = listOf("dfinity", "candid", "ic", "candid-kt", "android")
 
     (plugins) {
-
-        // first plugin
-        "greetingsPlugin" {
-            // id is captured from java-gradle-plugin configuration
-            displayName = "Gradle Greeting plugin"
-            tags = listOf("individual", "tags", "per", "plugin")
-            version = "1.2"
+        "candidKt" {
+            displayName = "Candid-kt Gradle plugin"
         }
     }
 }
