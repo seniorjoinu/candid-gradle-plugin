@@ -21,9 +21,14 @@ plugins {
   id 'com.github.seniorjoinu.candid' version '0.1-rc6'
   ...
 }
-
 ...
-
+repositories {
+    ...
+    maven { setUrl("https://dl.bintray.com/hotkeytlt/maven") }
+    maven { setUrl("https://jitpack.io") }
+    ...
+}
+...
 candid {
   didPath = "path to the did file"
   genPath = "path to the generated kotlin file"
