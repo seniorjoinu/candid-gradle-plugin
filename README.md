@@ -18,7 +18,7 @@ buildscript {
 
 plugins {
   ...
-  id 'com.github.seniorjoinu.candid' version '0.1-rc5'
+  id 'com.github.seniorjoinu.candid' version '0.1-rc6'
   ...
 }
 
