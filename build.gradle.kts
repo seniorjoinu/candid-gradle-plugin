@@ -1,13 +1,13 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    kotlin("jvm") version "1.3.70"
     id("com.gradle.plugin-publish") version "0.12.0"
     `java-gradle-plugin`
+    kotlin("jvm") version "1.3.72"
 }
 
 group = "com.github.seniorjoinu"
-version = "0.1-rc4"
+version = "0.1-rc6"
 
 gradlePlugin {
     plugins {
@@ -25,7 +25,7 @@ repositories {
 }
 
 dependencies {
-    implementation("com.github.seniorjoinu:candid-kt:0.1-rc4")
+    implementation("com.github.seniorjoinu:candid-kt:0.1-rc6")
     implementation(kotlin("stdlib-jdk8"))
 }
 
