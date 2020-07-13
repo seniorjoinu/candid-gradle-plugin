@@ -7,17 +7,31 @@ Enables [candid-kt](https://github.com/seniorjoinu/candid-kt) into Gradle pipeli
 ```groovy
 // build.gradle
 
-plugins {
-  ...
-  id 'com.github.seniorjoinu.candid' version '0.1-rc4'
-  ...
+buildscript {
+    repositories {
+        ...
+        maven { setUrl("https://dl.bintray.com/hotkeytlt/maven") }
+        maven { setUrl("https://jitpack.io") }
+        ...
+    }
 }
 
+plugins {
+  ...
+  id 'com.github.seniorjoinu.candid' version '0.1-rc6'
+  ...
+}
 ...
-
+repositories {
+    ...
+    maven { setUrl("https://dl.bintray.com/hotkeytlt/maven") }
+    maven { setUrl("https://jitpack.io") }
+    ...
+}
+...
 candid {
   didPath = "path to the did file"
-  getPath = "path to the generated kotlin file"
+  genPath = "path to the generated kotlin file"
   genPackage = "package of the generated kotlin file"
 }
 ```
