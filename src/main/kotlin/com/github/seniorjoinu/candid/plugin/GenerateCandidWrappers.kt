@@ -3,13 +3,12 @@ package com.github.seniorjoinu.candid.plugin
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import senior.joinu.candid.CandidCodeGenerator
-import java.lang.RuntimeException
 import java.nio.file.Paths
 
 open class CandidKtPluginExtension {
     var didPath: String? = null
     var genPath: String? = null
-    var genPackage: String? = null
+    var genPackage: String = ""
 }
 
 class CandidKtPlugin : Plugin<Project> {
@@ -20,7 +19,7 @@ class CandidKtPlugin : Plugin<Project> {
                 CandidCodeGenerator.generateFor(
                     Paths.get(extension.didPath ?: throw RuntimeException("No didPath was provided")),
                     Paths.get(extension.genPath ?: throw RuntimeException("No genPath was provided")),
-                    extension.genPackage ?: throw RuntimeException("No genPackage was provided")
+                    extension.genPackage
                 )
             }
         }
