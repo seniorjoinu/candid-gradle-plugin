@@ -26,7 +26,7 @@ plugins {
 
 candid {
   didPath = "path to the did file"
-  getPath = "path to the generated kotlin file"
+  genPath = "path to the generated kotlin file"
   genPackage = "package of the generated kotlin file"
 }
 ```
