@@ -1,13 +1,13 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-
 plugins {
     kotlin("jvm") version "1.3.70"
     id("com.gradle.plugin-publish") version "0.12.0"
+    groovy
     `java-gradle-plugin`
+    `project-report`
 }
 
 group = "com.github.seniorjoinu"
-version = "0.1-rc4"
+version = "0.1-rc5"
 
 gradlePlugin {
     plugins {
@@ -27,6 +27,12 @@ repositories {
 dependencies {
     implementation("com.github.seniorjoinu:candid-kt:0.1-rc4")
     implementation(kotlin("stdlib-jdk8"))
+    testImplementation("org.junit.jupiter:junit-jupiter:5.7.0-M1")
+    testImplementation("org.spockframework:spock-core:2.0-M3-groovy-2.5")
+}
+
+tasks.test {
+    useJUnitPlatform()
 }
 
 pluginBundle {
@@ -42,11 +48,11 @@ pluginBundle {
     }
 }
 
-val compileKotlin: KotlinCompile by tasks
+val compileKotlin: org.jetbrains.kotlin.gradle.tasks.KotlinCompile by tasks
 compileKotlin.kotlinOptions {
     jvmTarget = "1.8"
 }
-val compileTestKotlin: KotlinCompile by tasks
+val compileTestKotlin: org.jetbrains.kotlin.gradle.tasks.KotlinCompile by tasks
 compileTestKotlin.kotlinOptions {
     jvmTarget = "1.8"
 }
