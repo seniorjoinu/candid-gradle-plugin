@@ -3,11 +3,11 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
     id("com.gradle.plugin-publish") version "0.12.0"
     `java-gradle-plugin`
-    kotlin("jvm") version "1.3.72"
+    kotlin("jvm") version "1.4.10"
 }
 
 group = "com.github.seniorjoinu"
-version = "0.1-rc7"
+version = "0.1-rc8"
 
 gradlePlugin {
     plugins {
@@ -25,7 +25,7 @@ repositories {
 }
 
 dependencies {
-    implementation("com.github.seniorjoinu:candid-kt:0.1-rc7")
+    implementation("com.github.seniorjoinu:candid-kt:0.1-rc8")
     implementation(kotlin("stdlib-jdk8"))
 }
 
