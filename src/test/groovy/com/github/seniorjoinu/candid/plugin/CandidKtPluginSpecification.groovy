@@ -9,8 +9,8 @@ import java.nio.file.Files
 import java.nio.file.Paths
 
 import static CandidKtPluginKt.CANDIDKT_TASK_NAME
-import static com.github.seniorjoinu.candid.plugin.CandidKtPluginKt.CANDIDKT_GROUP_NAME
-import static com.github.seniorjoinu.candid.plugin.CandidKtPluginKt.CANDIDKT_TASK_DESCRIPTION
+import static CandidKtPluginKt.CANDIDKT_GROUP_NAME
+import static CandidKtPluginKt.CANDIDKT_TASK_DESCRIPTION
 import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
 
 /**
@@ -34,12 +34,14 @@ class CandidKtPluginSpecification extends Specification {
         genPackageName = 'tld.d.etc'
         testProjectDir = new TemporaryFolder()
         testProjectDir.create()
-        didFile = testProjectDir.newFile("${genFileName}.did")
+        File mainSourceSetDir = testProjectDir.newFolder('src', 'candid', 'main')
+        mainSourceSetDir.mkdirs()
+        didFile = new File(mainSourceSetDir, "${genFileName}.did")
         didFile << """
             service : {
               "greet": (text) -> (text);
             }
-        """
+        """.stripIndent()
     }
 
     def setup() {
@@ -50,7 +52,7 @@ class CandidKtPluginSpecification extends Specification {
             plugins {
                 id 'com.github.seniorjoinu.candid'
             }
-        """
+        """.stripIndent()
     }
 
     def "positive execute 'gradle tasks'"() {
@@ -71,11 +73,11 @@ class CandidKtPluginSpecification extends Specification {
         def taskName = 'help'
         buildFile << """
             candid {
-                didPath = project.file("$didFile.name")
+                didPath = project.file("src/candid/main/$didFile.name")
                 genPath = "$genFileName"
                 genPackage = "$genPackageName"
             }
-        """
+        """.stripIndent()
 
         when: 'the build is executed with the task name as start parameter'
         def result = GradleRunner.create().withProjectDir(testProjectDir.root).forwardStdOutput(new PrintWriter(System.out)).forwardStdError(new PrintWriter(System.err)).withArguments(taskName, '--task', CANDIDKT_TASK_NAME, '-S').withPluginClasspath().build()
@@ -92,11 +94,11 @@ class CandidKtPluginSpecification extends Specification {
         given: 'the candid extension is configured'
         buildFile << """
             candid {
-                didPath = project.file("$didFile.name")
+                didPath = project.file("src/candid/main/$didFile.name")
                 genPath = "$genFileName"
                 genPackage = "$genPackageName"
             }
-        """
+        """.stripIndent()
 
         when: "the build is executed with the task 'generateCandidKt' as start parameter"
         def result = GradleRunner.create().withProjectDir(testProjectDir.root).forwardStdOutput(new PrintWriter(System.out)).forwardStdError(new PrintWriter(System.err)).withArguments(CANDIDKT_TASK_NAME).withPluginClasspath().build()
@@ -114,9 +116,9 @@ class CandidKtPluginSpecification extends Specification {
         given: 'the candid extension is configured'
         buildFile << """
             candid {
-                didPath = project.file("$didFile.name")
+                didPath = project.file("src/candid/main/$didFile.name")
             }
-        """
+        """.stripIndent()
 
         when: "the build is executed with the task 'generateCandidKt' as start parameter"
         def result = GradleRunner.create().withProjectDir(testProjectDir.root).forwardStdOutput(new PrintWriter(System.out)).forwardStdError(new PrintWriter(System.err)).withArguments(CANDIDKT_TASK_NAME).withPluginClasspath().build()
