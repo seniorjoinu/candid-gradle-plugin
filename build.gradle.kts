@@ -7,7 +7,7 @@ plugins {
 }
 
 group = "com.github.seniorjoinu"
-version = "0.1-rc8"
+version = "0.1-rc9"
 
 gradlePlugin {
     plugins {
@@ -25,7 +25,7 @@ repositories {
 }
 
 dependencies {
-    implementation("com.github.seniorjoinu:candid-kt:0.1-rc8")
+    implementation("com.github.seniorjoinu:candid-kt:0.1-rc9")
     implementation(kotlin("stdlib-jdk8"))
 }
 
