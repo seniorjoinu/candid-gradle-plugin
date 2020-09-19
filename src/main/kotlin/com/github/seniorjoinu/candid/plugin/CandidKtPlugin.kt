@@ -22,34 +22,35 @@ abstract class CandidKtPlugin : Plugin<Project> {
             sourceSets = candidSourceSetContainer(candidSourceSetFactory(project))
         }
 
-        configureTask(project, CandidSourceSet.SOURCE_SET_NAME_MAIN)
-        configureTask(project, CandidSourceSet.SOURCE_SET_NAME_TEST)
+        val mainSourceSet = configureSourceSet(project, CandidSourceSet.SOURCE_SET_NAME_MAIN)
+        val testSourceSet = configureSourceSet(project, CandidSourceSet.SOURCE_SET_NAME_TEST)
+
+        project.afterEvaluate {
+            project.candidExtension.sourceSets.filter { it != mainSourceSet && it != testSourceSet }.forEach {
+                configureSourceSet(project, it.name)
+            }
+        }
     }
 
     internal open fun candidSourceSetFactory(project: Project): NamedDomainObjectFactory<CandidSourceSet> =
             DefaultCandidSourceSetFactory(project)
 
-    private fun configureTask(project: Project, sourceSetName: String) = with(project.candidExtension) {
-        // Add a task that uses configuration from the extension object
-        val taskName = if (sourceSetName == CandidSourceSet.SOURCE_SET_NAME_MAIN) CANDIDKT_TASK_NAME else CANDIDKT_TASK_NAME.replace("generate", "generate${sourceSetName.capitalize()}")
-        project.tasks.register(taskName, CandidKtTask::class.java) {
-            it.description = "Generates Kotlin source files from the '$sourceSetName' source set Candid language files."
-            it.group = CANDIDKT_GROUP_NAME
-            it.sourceSetName = sourceSetName
-            it.genPath.set(genPath)
-            it.genPackage.set(genPackage)
-        }
-        configureSourceSet(project, sourceSetName)
-    }
-
-    private fun configureSourceSet(project: Project, sourceSetName: String) = with(project.candidExtension) {
+    private fun configureSourceSet(project: Project, sourceSetName: String): CandidSourceSet = with(project.candidExtension) {
         // Add a source set that uses configuration from the extension object
         val sourceSet = sourceSets.maybeCreate(sourceSetName)
 
-        project.tasks.withType(CandidKtTask::class.java).forEach { candidKtTask ->
+        // Add a task that uses configuration from the extension object
+        val taskName = if (sourceSetName == CandidSourceSet.SOURCE_SET_NAME_MAIN) CANDIDKT_TASK_NAME else CANDIDKT_TASK_NAME.replace("generate", "generate${sourceSetName.capitalize()}")
+        project.tasks.register(taskName, CandidKtTask::class.java) { candidKtTask ->
+            candidKtTask.description = "Generates Kotlin source files from the '$sourceSetName' source set Candid language files."
+            candidKtTask.group = CANDIDKT_GROUP_NAME
+            candidKtTask.sourceSetName = sourceSetName
+            candidKtTask.genPath.set(genPath)
+            candidKtTask.genPackage.set(genPackage)
             candidKtTask.sourceSet.takeIf { it != sourceSet }?.dependsOn(sourceSet)
             candidKtTask.source(sourceSet.candid)
             candidKtTask.didFiles += sourceSet.candid
         }
+        return sourceSet
     }
 }
