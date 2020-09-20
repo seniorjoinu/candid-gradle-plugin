@@ -1,13 +1,12 @@
 plugins {
-    kotlin("jvm") version "1.3.70"
     id("com.gradle.plugin-publish") version "0.12.0"
     groovy
     `java-gradle-plugin`
-    `project-report`
+    kotlin("jvm") version "1.3.70"
 }
 
 group = "com.github.seniorjoinu"
-version = "0.1-rc5"
+version = "0.1-rc9"
 
 gradlePlugin {
     plugins {
