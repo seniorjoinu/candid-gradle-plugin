@@ -20,9 +20,8 @@ import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
 class CandidKtPluginSpecification extends Specification {
     @Shared TemporaryFolder testProjectDir = new TemporaryFolder()
     @Shared File buildFile
-    @Shared File didFile
-    @Shared String genFileName
-    @Shared String genPackageName
+    @Shared String didName
+    @Shared String packageName
 
     def cleanupSpec() { testProjectDir.delete() }
 
@@ -30,24 +29,15 @@ class CandidKtPluginSpecification extends Specification {
 
     def setupSpec() {
         given: 'a test fixture'
-        genFileName = 'greet'
-        genPackageName = 'tld.d.etc'
+        didName = 'greet'
+        packageName = 'tld.d.etc'
         testProjectDir = new TemporaryFolder()
         testProjectDir.create()
-        File mainSourceSetDir = testProjectDir.newFolder('src', 'main', 'candid')
-        mainSourceSetDir.mkdirs()
-        didFile = new File(mainSourceSetDir, "${genFileName}.did")
-        didFile << """
-            service : {
-              "greet": (text) -> (text);
-            }
-        """.stripIndent()
     }
 
     def setup() {
         given: 'the plugin is applied'
         buildFile = testProjectDir.newFile('build.gradle')
-        given: 'the plugin is applied'
         buildFile << """
             plugins {
                 id 'com.github.seniorjoinu.candid'
@@ -85,70 +75,65 @@ class CandidKtPluginSpecification extends Specification {
     }
 
     def "positive execute 'gradle generateCandidKt' with defaults"() {
-        when: "the build is executed with the task 'generateCandidKt' as start parameter"
+        given: 'a did file'
+        File didFile = createDidFile(didName, 'src', 'main', 'candid')
+
+        when: "the build is executed with task 'generateCandidKt' as start parameter"
         def result = GradleRunner.create().withProjectDir(testProjectDir.root).forwardStdOutput(new PrintWriter(System.out)).forwardStdError(new PrintWriter(System.err)).withArguments(CANDIDKT_TASK_NAME, '--warning-mode', 'all').withPluginClasspath().build()
 
         then: 'it completes successfully'
         result.task(":$CANDIDKT_TASK_NAME").outcome == SUCCESS
-        File ktFile = Paths.get(testProjectDir.root.canonicalPath, "build/$CANDIDKT_TASK_DESTINATION_PREFIX/main", genFileName.capitalize(), "${genFileName.capitalize()}.kt").toFile()
+        File ktFile = Paths.get(testProjectDir.root.canonicalPath, "build/$CANDIDKT_TASK_DESTINATION_PREFIX/main", didName.capitalize(), "${didName.capitalize()}.kt").toFile()
 
         and: 'the Kotlin file is generated'
         Files.exists(ktFile.toPath())
         Files.size(ktFile.toPath()) != 0
+
+        cleanup: 'the did file'
+        didFile.delete()
     }
 
     def "positive execute 'gradle generateCandidKt' with reconfigured destination directory"() {
-        given: 'the candid extension is configured'
+        given: 'a did file and a configured candid extension'
+        File didFile = createDidFile(didName, 'src', 'main', 'candid')
         buildFile << """
             candid {
                 sourceSets.main.candid.destinationDirectory.fileValue(project.file('build/output'))
-                genPackage = "$genPackageName"
+                genPackage = "$packageName"
             }
         """.stripIndent()
 
-        when: "the build is executed with the task 'generateCandidKt' as start parameter"
+        when: "the build is executed with task 'generateCandidKt' as start parameter"
         def result = GradleRunner.create().withProjectDir(testProjectDir.root).forwardStdOutput(new PrintWriter(System.out)).forwardStdError(new PrintWriter(System.err)).withArguments(CANDIDKT_TASK_NAME).withDebug(true).withPluginClasspath().build()
 
         then: 'it completes successfully'
         result.task(":$CANDIDKT_TASK_NAME").outcome == SUCCESS
-        File ktFile = Paths.get(testProjectDir.root.canonicalPath, "build/output", genFileName.capitalize(), genPackageName.replace('.', '/'), "${genFileName.capitalize()}.kt").toFile()
+        File ktFile = Paths.get(testProjectDir.root.canonicalPath, "build/output", didName.capitalize(), packageName.replace('.', '/'), "${didName.capitalize()}.kt").toFile()
 
         and: 'the Kotlin file is generated'
         Files.exists(ktFile.toPath())
         Files.size(ktFile.toPath()) != 0
+
+        cleanup: 'the did file'
+        didFile.delete()
     }
 
     def "positive execute 'gradle generateCandidKt' with nested did files under different source directories"() {
-        given: 'the candid extension is configured with two did files under different source directories'
-        didFile.delete() // Not using the did file used by the other tests
-        File nestedSourceDir = testProjectDir.newFolder('src', 'main', 'candid', 'tld', 'd', 'etc')
-        nestedSourceDir.mkdirs()
-        File otherNestedSourceDir = testProjectDir.newFolder('src', 'other', 'candid', 'tld', 'd', 'etc')
-        otherNestedSourceDir.mkdirs()
-        didFile = new File(nestedSourceDir, "${genFileName}.did")
-        didFile << """
-            service : {
-              "greet": (text) -> (text);
-            }
-        """.stripIndent()
-        File otherDidFile = new File(otherNestedSourceDir, "other-greet.did")
-        otherDidFile << """
-            service : {
-              "greet": (text) -> (text);
-            }
-        """.stripIndent()
+        given: 'two did files under different source directories and a configured candid extension'
+        File didFile = createDidFile(didName, 'src', 'main', 'candid', 'tld', 'd', 'etc')
+        File otherDidFile = createDidFile('other-greet', 'src', 'other', 'candid', 'tld', 'd', 'etc')
         buildFile << """
             candid {
                 sourceSets.main.candid.srcDir 'src/other/candid'
             }
         """.stripIndent()
 
-        when: "the build is executed with the task 'generateCandidKt' as start parameter"
+        when: "the build is executed with task 'generateCandidKt' as start parameter"
         def result = GradleRunner.create().withProjectDir(testProjectDir.root).forwardStdOutput(new PrintWriter(System.out)).forwardStdError(new PrintWriter(System.err)).withArguments(CANDIDKT_TASK_NAME).withDebug(true).withPluginClasspath().build()
 
         then: 'it completes successfully'
         result.task(":$CANDIDKT_TASK_NAME").outcome == SUCCESS
-        File ktFile = Paths.get(testProjectDir.root.canonicalPath, "build/$CANDIDKT_TASK_DESTINATION_PREFIX/main", genFileName.capitalize(), 'tld/d/etc', "${genFileName.capitalize()}.kt").toFile()
+        File ktFile = Paths.get(testProjectDir.root.canonicalPath, "build/$CANDIDKT_TASK_DESTINATION_PREFIX/main", didName.capitalize(), 'tld/d/etc', "${didName.capitalize()}.kt").toFile()
         File otherKtFile = Paths.get(testProjectDir.root.canonicalPath, "build/$CANDIDKT_TASK_DESTINATION_PREFIX/main", 'OtherGreet', 'tld/d/etc', "OtherGreet.kt").toFile()
 
         and: 'the Kotlin files are generated'
@@ -157,23 +142,15 @@ class CandidKtPluginSpecification extends Specification {
         Files.exists(otherKtFile.toPath())
         Files.size(otherKtFile.toPath()) != 0
 
-        cleanup: 'the did files used by this test only'
+        cleanup: 'the did file'
         didFile.delete()
         otherDidFile.delete()
     }
 
     def "positive execute 'gradle generateIntegTestCandidKt'"() {
-        given: 'the candid extension is configured with did file under a new source set'
-        didFile.delete() // Not using the did file used by the other tests
+        given: 'a did file under a new source set and a configured candid extension'
         def taskName = 'generateIntegTestCandidKt'
-        File integTestSourceSetDir = testProjectDir.newFolder('src', 'integTest', 'candid')
-        integTestSourceSetDir.mkdirs()
-        didFile = new File(integTestSourceSetDir, "${genFileName}.did")
-        didFile << """
-            service : {
-              "greet": (text) -> (text);
-            }
-        """.stripIndent()
+        File didFile = createDidFile(didName, 'src', 'integTest', 'candid')
         buildFile << """
             candid {
                 sourceSets {
@@ -182,18 +159,29 @@ class CandidKtPluginSpecification extends Specification {
             }
         """.stripIndent()
 
-        when: "the build is executed with the task 'generateIntegTestCandidKt' as start parameter"
+        when: "the build is executed with task 'generateIntegTestCandidKt' as start parameter"
         def result = GradleRunner.create().withProjectDir(testProjectDir.root).forwardStdOutput(new PrintWriter(System.out)).forwardStdError(new PrintWriter(System.err)).withArguments(taskName).withDebug(true).withPluginClasspath().build()
 
         then: 'it completes successfully'
         result.task(":$taskName").outcome == SUCCESS
-        File ktFile = Paths.get(testProjectDir.root.canonicalPath, "build/$CANDIDKT_TASK_DESTINATION_PREFIX/integTest", genFileName.capitalize(), "${genFileName.capitalize()}.kt").toFile()
+        File ktFile = Paths.get(testProjectDir.root.canonicalPath, "build/$CANDIDKT_TASK_DESTINATION_PREFIX/integTest", didName.capitalize(), "${didName.capitalize()}.kt").toFile()
 
         and: 'the Kotlin file is generated'
         Files.exists(ktFile.toPath())
         Files.size(ktFile.toPath()) != 0
 
-        cleanup: 'the did file used by this test only'
+        cleanup: 'the did file'
         didFile.delete()
+    }
+
+    private createDidFile(String didName, String... folderNames) {
+        File sourceSetDir = new File(testProjectDir.root, folderNames.join('/'))
+        sourceSetDir.mkdirs()
+        File didFile = new File(sourceSetDir, "${didName}.did")
+        didFile << """
+            service : {
+              "greet": (text) -> (text);
+            }
+        """.stripIndent()
     }
 }
