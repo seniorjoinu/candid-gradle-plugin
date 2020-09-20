@@ -25,7 +25,7 @@ repositories {
 }
 
 dependencies {
-    implementation("com.github.seniorjoinu:candid-kt:0.1-rc4")
+    implementation("com.github.seniorjoinu:candid-kt:0.1-rc7")
     implementation(kotlin("stdlib-jdk8"))
     testImplementation("org.junit.jupiter:junit-jupiter:5.7.0-M1")
     testImplementation("org.spockframework:spock-core:2.0-M3-groovy-2.5")

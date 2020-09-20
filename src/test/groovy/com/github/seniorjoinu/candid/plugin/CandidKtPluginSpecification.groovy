@@ -83,7 +83,7 @@ class CandidKtPluginSpecification extends Specification {
 
         then: 'it completes successfully'
         result.task(":$CANDIDKT_TASK_NAME").outcome == SUCCESS
-        File ktFile = Paths.get(testProjectDir.root.canonicalPath, "build/$CANDIDKT_TASK_DESTINATION_PREFIX/main", didName.capitalize(), "${didName.capitalize()}.kt").toFile()
+        File ktFile = Paths.get(testProjectDir.root.canonicalPath, "build/$CANDIDKT_TASK_DESTINATION_PREFIX/main", didName.capitalize(), "${didName}.did.kt").toFile()
 
         and: 'the Kotlin file is generated'
         Files.exists(ktFile.toPath())
@@ -108,7 +108,7 @@ class CandidKtPluginSpecification extends Specification {
 
         then: 'it completes successfully'
         result.task(":$CANDIDKT_TASK_NAME").outcome == SUCCESS
-        File ktFile = Paths.get(testProjectDir.root.canonicalPath, "build/output", didName.capitalize(), packageName.replace('.', '/'), "${didName.capitalize()}.kt").toFile()
+        File ktFile = Paths.get(testProjectDir.root.canonicalPath, "build/output", didName.capitalize(), packageName.replace('.', '/'), "${didName}.did.kt").toFile()
 
         and: 'the Kotlin file is generated'
         Files.exists(ktFile.toPath())
@@ -133,8 +133,8 @@ class CandidKtPluginSpecification extends Specification {
 
         then: 'it completes successfully'
         result.task(":$CANDIDKT_TASK_NAME").outcome == SUCCESS
-        File ktFile = Paths.get(testProjectDir.root.canonicalPath, "build/$CANDIDKT_TASK_DESTINATION_PREFIX/main", didName.capitalize(), 'tld/d/etc', "${didName.capitalize()}.kt").toFile()
-        File otherKtFile = Paths.get(testProjectDir.root.canonicalPath, "build/$CANDIDKT_TASK_DESTINATION_PREFIX/main", 'OtherGreet', 'tld/d/etc', "OtherGreet.kt").toFile()
+        File ktFile = Paths.get(testProjectDir.root.canonicalPath, "build/$CANDIDKT_TASK_DESTINATION_PREFIX/main", didName.capitalize(), 'tld/d/etc', "${didName}.did.kt").toFile()
+        File otherKtFile = Paths.get(testProjectDir.root.canonicalPath, "build/$CANDIDKT_TASK_DESTINATION_PREFIX/main", 'OtherGreet', 'tld/d/etc', "other-greet.did.kt").toFile()
 
         and: 'the Kotlin files are generated'
         Files.exists(ktFile.toPath())
@@ -164,7 +164,7 @@ class CandidKtPluginSpecification extends Specification {
 
         then: 'it completes successfully'
         result.task(":$taskName").outcome == SUCCESS
-        File ktFile = Paths.get(testProjectDir.root.canonicalPath, "build/$CANDIDKT_TASK_DESTINATION_PREFIX/integTest", didName.capitalize(), "${didName.capitalize()}.kt").toFile()
+        File ktFile = Paths.get(testProjectDir.root.canonicalPath, "build/$CANDIDKT_TASK_DESTINATION_PREFIX/integTest", didName.capitalize(), "${didName}.did.kt").toFile()
 
         and: 'the Kotlin file is generated'
         Files.exists(ktFile.toPath())
