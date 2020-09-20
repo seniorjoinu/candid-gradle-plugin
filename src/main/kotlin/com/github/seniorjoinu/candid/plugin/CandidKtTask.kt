@@ -6,7 +6,6 @@ import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.Optional
-import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.PathSensitive
 import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.SourceTask
@@ -28,20 +27,17 @@ abstract class CandidKtTask : SourceTask() {
     @get:Input @get:Optional abstract val genPath: Property<String>
     @get:Input @get:Optional abstract val genPackage: Property<String>
 
-    @get:OutputDirectory val destinationDir by lazy { project.buildDir.resolve("$CANDIDKT_TASK_DESTINATION_PREFIX/$sourceSetName") }
-
     @TaskAction fun execute() {
         val prettyTag = genPath.orNull?.let { "[$it]" } ?: "[empty]"
+        val destinationDir = sourceSet.candid.destinationDirectory.asFile.get()
 
         logger.lifecycle("$prettyTag genPackage :: ${genPackage.orNull}")
-        logger.lifecycle("$prettyTag  outputDir :: ${destinationDir.absolutePath}")
-
-        destinationDir.mkdirs()
 
         didFiles.forEach {
-            var outputFile = File(destinationDir, it.nameWithoutExtension.capitalize())
-            logger.lifecycle("$prettyTag outputFile :: ${outputFile.absolutePath}")
-            CandidCodeGenerator.generateFor(it.toPath(), outputFile.toPath(), genPackage.getOrElse(""))
+            val destinationFile = File(destinationDir, it.nameWithoutExtension.capitalize())
+            logger.lifecycle("$prettyTag    didPath :: $it")
+            logger.lifecycle("$prettyTag    genPath :: $destinationFile")
+            CandidCodeGenerator.generateFor(it.toPath(), destinationFile.toPath(), genPackage.getOrElse(""))
         }
     }
 }

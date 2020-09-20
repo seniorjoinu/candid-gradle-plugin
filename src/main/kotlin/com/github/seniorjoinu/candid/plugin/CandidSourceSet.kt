@@ -67,8 +67,9 @@ internal class DefaultCandidSourceSet(
         private val displayName: String
 ) : CandidSourceSet {
 
-    override val candid: SourceDirectorySet = createDefaultSourceDirectorySet(project, "$name Candid source").apply {
+    override val candid: SourceDirectorySet = createDefaultSourceDirectorySet(project, name).apply {
         filter.include("**/*.did")
+        destinationDirectory.fileValue(project.buildDir.resolve("$CANDIDKT_TASK_DESTINATION_PREFIX/$name"))
     }
 
 
@@ -85,7 +86,7 @@ internal class DefaultCandidSourceSet(
     override val dependsOn: Set<CandidSourceSet>
         get() = dependsOnSourceSetsImpl
 
-    override fun toString(): String = "source set $name"
+    override fun toString(): String = "Candid '$name' source set"
 }
 
 private fun createDefaultSourceDirectorySet(project: Project, name: String?): SourceDirectorySet = project.objects.sourceDirectorySet(name, name)
