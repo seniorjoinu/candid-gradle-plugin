@@ -19,7 +19,6 @@ import java.io.File
 abstract class CandidKtTask : SourceTask() {
 
     @get:Internal internal abstract var sourceSetName: String
-
     @get:Internal internal val sourceSet: CandidSourceSet
         get() = project.candidExtension.sourceSets.getByName(sourceSetName)
 
@@ -30,11 +29,21 @@ abstract class CandidKtTask : SourceTask() {
         val prettyTag = "[${genPackage.orNull ?: "empty"}]"
         val destinationDir = sourceSet.candid.destinationDirectory.asFile.get()
 
-        didFiles.forEach {
-            val destinationFile = File(destinationDir, it.nameWithoutExtension.capitalize())
-            logger.lifecycle("$prettyTag didPath :: $it")
+        didFiles.forEach { didFile ->
+            val destinationFile = File(destinationDir, didFile.nameWithoutExtension.split('-').joinToString("") { it.capitalize() })
+            val packageName = getPackageName(didFile)
+            logger.lifecycle("$prettyTag pkgName :: $packageName")
+            logger.lifecycle("$prettyTag didPath :: $didFile")
             logger.lifecycle("$prettyTag genPath :: $destinationFile")
-            CandidCodeGenerator.generateFor(it.toPath(), destinationFile.toPath(), genPackage.getOrElse(""))
+            CandidCodeGenerator.generateFor(didFile.toPath(), destinationFile.toPath(), packageName)
         }
+    }
+
+    private fun getPackageName(didFile: File): String {
+        sourceSet.candid.sourceDirectories.forEach { srcDir ->
+            val packagePath = didFile.relativeTo(srcDir).parent
+            if (packagePath != null && !packagePath.startsWith("..")) return packagePath.toString().replace(File.separatorChar, '.')
+        }
+        return genPackage.getOrElse("")
     }
 }

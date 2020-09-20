@@ -97,17 +97,11 @@ class CandidKtPluginSpecification extends Specification {
         Files.size(ktFile.toPath()) != 0
     }
 
-    def "positive execute 'gradle generateCandidKt'"() {
+    def "positive execute 'gradle generateCandidKt' with reconfigured destination directory"() {
         given: 'the candid extension is configured'
         buildFile << """
             candid {
-                sourceSets {
-                    main {
-                        candid {
-                            destinationDirectory.fileValue(project.file('build/output'))
-                        }
-                    }
-                }
+                sourceSets.main.candid.destinationDirectory.fileValue(project.file('build/output'))
                 genPackage = "$genPackageName"
             }
         """.stripIndent()
@@ -124,35 +118,53 @@ class CandidKtPluginSpecification extends Specification {
         Files.size(ktFile.toPath()) != 0
     }
 
-    def "positive execute 'gradle generateCandidKt' with defaults but nested did file"() {
-        given: 'the candid extension is configured with did file under a new source set'
+    def "positive execute 'gradle generateCandidKt' with nested did files under different source directories"() {
+        given: 'the candid extension is configured with two did files under different source directories'
+        didFile.delete() // Not using the did file used by the other tests
         File nestedSourceDir = testProjectDir.newFolder('src', 'main', 'candid', 'tld', 'd', 'etc')
         nestedSourceDir.mkdirs()
-        didFile.delete()
+        File otherNestedSourceDir = testProjectDir.newFolder('src', 'other', 'candid', 'tld', 'd', 'etc')
+        otherNestedSourceDir.mkdirs()
         didFile = new File(nestedSourceDir, "${genFileName}.did")
         didFile << """
             service : {
               "greet": (text) -> (text);
             }
         """.stripIndent()
+        File otherDidFile = new File(otherNestedSourceDir, "other-greet.did")
+        otherDidFile << """
+            service : {
+              "greet": (text) -> (text);
+            }
+        """.stripIndent()
+        buildFile << """
+            candid {
+                sourceSets.main.candid.srcDir 'src/other/candid'
+            }
+        """.stripIndent()
 
-        when: "the build is executed with the task 'generateIntegTestCandidKt' as start parameter"
+        when: "the build is executed with the task 'generateCandidKt' as start parameter"
         def result = GradleRunner.create().withProjectDir(testProjectDir.root).forwardStdOutput(new PrintWriter(System.out)).forwardStdError(new PrintWriter(System.err)).withArguments(CANDIDKT_TASK_NAME).withDebug(true).withPluginClasspath().build()
 
         then: 'it completes successfully'
         result.task(":$CANDIDKT_TASK_NAME").outcome == SUCCESS
-        File ktFile = Paths.get(testProjectDir.root.canonicalPath, "build/$CANDIDKT_TASK_DESTINATION_PREFIX/main", genFileName.capitalize(), "${genFileName.capitalize()}.kt").toFile()
+        File ktFile = Paths.get(testProjectDir.root.canonicalPath, "build/$CANDIDKT_TASK_DESTINATION_PREFIX/main", genFileName.capitalize(), 'tld/d/etc', "${genFileName.capitalize()}.kt").toFile()
+        File otherKtFile = Paths.get(testProjectDir.root.canonicalPath, "build/$CANDIDKT_TASK_DESTINATION_PREFIX/main", 'OtherGreet', 'tld/d/etc', "OtherGreet.kt").toFile()
 
-        and: 'the Kotlin file is generated'
+        and: 'the Kotlin files are generated'
         Files.exists(ktFile.toPath())
         Files.size(ktFile.toPath()) != 0
+        Files.exists(otherKtFile.toPath())
+        Files.size(otherKtFile.toPath()) != 0
 
-        cleanup: 'the did file used by this test only'
+        cleanup: 'the did files used by this test only'
         didFile.delete()
+        otherDidFile.delete()
     }
 
     def "positive execute 'gradle generateIntegTestCandidKt'"() {
         given: 'the candid extension is configured with did file under a new source set'
+        didFile.delete() // Not using the did file used by the other tests
         def taskName = 'generateIntegTestCandidKt'
         File integTestSourceSetDir = testProjectDir.newFolder('src', 'integTest', 'candid')
         integTestSourceSetDir.mkdirs()
