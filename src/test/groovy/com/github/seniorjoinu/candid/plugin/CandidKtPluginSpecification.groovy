@@ -108,7 +108,6 @@ class CandidKtPluginSpecification extends Specification {
                         }
                     }
                 }
-                genPath = "$genFileName"
                 genPackage = "$genPackageName"
             }
         """.stripIndent()

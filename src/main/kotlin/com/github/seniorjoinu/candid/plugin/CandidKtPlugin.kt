@@ -45,7 +45,6 @@ abstract class CandidKtPlugin : Plugin<Project> {
             candidKtTask.description = "Generates Kotlin source files from the '$sourceSetName' source set Candid language files."
             candidKtTask.group = CANDIDKT_GROUP_NAME
             candidKtTask.sourceSetName = sourceSetName
-            candidKtTask.genPath.set(genPath)
             candidKtTask.genPackage.set(genPackage)
             candidKtTask.sourceSet.takeIf { it != sourceSet }?.dependsOn(sourceSet)
             candidKtTask.source(sourceSet.candid)

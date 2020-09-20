@@ -10,7 +10,6 @@ import javax.inject.Inject
  * The Candid to Kotlin extension.
  */
 abstract class CandidKtExtension @Inject constructor(project: Project) : CandidSourceSetContainer {
-    val genPath: Property<String> = project.objects.property(String::class.java)
     val genPackage: Property<String> = project.objects.property(String::class.java)
     override var sourceSets: NamedDomainObjectContainer<CandidSourceSet>
         @Suppress("UNCHECKED_CAST")
