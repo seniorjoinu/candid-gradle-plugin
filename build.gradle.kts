@@ -2,7 +2,7 @@ plugins {
     id("com.gradle.plugin-publish") version "0.12.0"
     groovy
     `java-gradle-plugin`
-    kotlin("jvm") version "1.3.70"
+    kotlin("jvm") version "1.4.10"
 }
 
 group = "com.github.seniorjoinu"
@@ -25,9 +25,11 @@ repositories {
 
 dependencies {
     implementation("com.github.seniorjoinu:candid-kt:0.1-rc7")
-    implementation(kotlin("stdlib-jdk8"))
+    implementation(kotlin("stdlib-jdk8", "1.4.10"))
     testImplementation("org.junit.jupiter:junit-jupiter:5.7.0-M1")
     testImplementation("org.spockframework:spock-core:2.0-M3-groovy-2.5")
+    testImplementation("io.kotest:kotest-runner-junit5:4.2.5")
+    testImplementation("io.kotest:kotest-assertions-core:4.2.5")
 }
 
 tasks.test {
