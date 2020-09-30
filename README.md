@@ -1,3 +1,5 @@
+[![](https://jitci.com/gh/seniorjoinu/candid-kt-gradle-plugin/svg)](https://jitci.com/gh/seniorjoinu/candid-kt-gradle-plugin)
+
 ### Candid-kt Gradle plugin
 
 Enables [candid-kt](https://github.com/seniorjoinu/candid-kt) into Gradle pipeline 
