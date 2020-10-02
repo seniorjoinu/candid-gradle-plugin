@@ -1,11 +1,11 @@
 plugins {
     id("com.gradle.plugin-publish") version "0.12.0"
     `java-gradle-plugin`
-    kotlin("jvm") version "1.4.10"
+    kotlin("jvm") version "1.3.72"
 }
 
 group = "com.github.seniorjoinu"
-version = "0.1-rc9"
+version = "0.1-rc24"
 
 gradlePlugin {
     plugins {
@@ -23,8 +23,9 @@ repositories {
 }
 
 dependencies {
-    implementation("com.github.seniorjoinu:candid-kt:0.1-rc7")
-    implementation(kotlin("stdlib-jdk8", "1.4.10"))
+    implementation("com.github.seniorjoinu:candid-kt:0.1-rc24")
+    implementation(kotlin("stdlib-jdk8", "1.3.72"))
+
     testImplementation("org.junit.jupiter:junit-jupiter:5.7.0-M1")
     testImplementation("io.kotest:kotest-runner-junit5:4.2.5")
     testImplementation("io.kotest:kotest-assertions-core:4.2.5")

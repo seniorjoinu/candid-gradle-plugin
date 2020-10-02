@@ -34,7 +34,9 @@ abstract class CandidKtTask : SourceTask() {
             logger.lifecycle("$prettyTag pkgName :: $packageName")
             logger.lifecycle("$prettyTag didPath :: $didFile")
             logger.lifecycle("$prettyTag genPath :: $destinationDir")
-            CandidCodeGenerator.generateFor(didFile.toPath(), destinationDir.toPath(), packageName)
+
+            val src = CandidCodeGenerator.Source.File(didFile.toPath())
+            CandidCodeGenerator.generate(src, destinationDir, packageName)
         }
     }
 
