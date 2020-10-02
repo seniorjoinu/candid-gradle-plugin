@@ -1,5 +1,3 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-
 plugins {
     id("com.gradle.plugin-publish") version "0.12.0"
     `java-gradle-plugin`
@@ -25,8 +23,15 @@ repositories {
 }
 
 dependencies {
-    implementation("com.github.seniorjoinu:candid-kt:0.1-rc9")
-    implementation(kotlin("stdlib-jdk8"))
+    implementation("com.github.seniorjoinu:candid-kt:0.1-rc7")
+    implementation(kotlin("stdlib-jdk8", "1.4.10"))
+    testImplementation("org.junit.jupiter:junit-jupiter:5.7.0-M1")
+    testImplementation("io.kotest:kotest-runner-junit5:4.2.5")
+    testImplementation("io.kotest:kotest-assertions-core:4.2.5")
+}
+
+tasks.test {
+    useJUnitPlatform()
 }
 
 pluginBundle {
@@ -42,11 +47,11 @@ pluginBundle {
     }
 }
 
-val compileKotlin: KotlinCompile by tasks
+val compileKotlin: org.jetbrains.kotlin.gradle.tasks.KotlinCompile by tasks
 compileKotlin.kotlinOptions {
     jvmTarget = "1.8"
 }
-val compileTestKotlin: KotlinCompile by tasks
+val compileTestKotlin: org.jetbrains.kotlin.gradle.tasks.KotlinCompile by tasks
 compileTestKotlin.kotlinOptions {
     jvmTarget = "1.8"
 }
