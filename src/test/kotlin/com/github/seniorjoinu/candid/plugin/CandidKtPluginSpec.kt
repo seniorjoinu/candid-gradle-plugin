@@ -55,7 +55,7 @@ class CandidKtPluginSpec : FreeSpec({
             }
             "positive executing 'gradle generateCandidKt' with defaults" - {
                 val didFile = createDidFile(projectDir.root, didName, "src", "main", "candid")
-                val ktFile = Paths.get(projectDir.root.canonicalPath, "build/$CANDIDKT_TASK_DESTINATION_PREFIX/main", didName.capitalize(), "${didName}.did.kt").toFile()
+                val ktFile = Paths.get(projectDir.root.canonicalPath, "build/$CANDIDKT_TASK_DESTINATION_PREFIX/main", "${didName}.did.kt").toFile()
                 val arguments = listOf(CANDIDKT_TASK_NAME, "--warning-mode", "all")
                 val result = build(projectDir.root, arguments)
                 result.task(":$CANDIDKT_TASK_NAME")?.outcome shouldBe TaskOutcome.SUCCESS
@@ -65,7 +65,7 @@ class CandidKtPluginSpec : FreeSpec({
             }
             "positive executing 'gradle generateCandidKt' with reconfigured destination directory" - {
                 val didFile = createDidFile(projectDir.root, didName, "src", "main", "candid")
-                val ktFile = Paths.get(projectDir.root.canonicalPath, "build/output", didName.capitalize(), packageName.replace('.', '/'), "${didName}.did.kt").toFile()
+                val ktFile = Paths.get(projectDir.root.canonicalPath, "build/output", packageName.replace('.', '/'), "${didName}.did.kt").toFile()
                 buildFile.appendText("""
                     candid {
                         sourceSets.main.candid.destinationDirectory.fileValue(project.file('build/output'))
@@ -82,8 +82,8 @@ class CandidKtPluginSpec : FreeSpec({
             "positive executing 'gradle generateCandidKt' with nested did files under different source directories" - {
                 val didFile = createDidFile(projectDir.root, didName, "src", "main", "candid", "tld", "d", "etc")
                 val otherDidFile = createDidFile(projectDir.root, "other-greet", "src", "other", "candid", "tld", "d", "etc")
-                val ktFile = Paths.get(projectDir.root.canonicalPath, "build/$CANDIDKT_TASK_DESTINATION_PREFIX/main", didName.capitalize(), "tld/d/etc", "${didName}.did.kt").toFile()
-                val otherKtFile = Paths.get(projectDir.root.canonicalPath, "build/$CANDIDKT_TASK_DESTINATION_PREFIX/main", "OtherGreet", "tld/d/etc", "other-greet.did.kt").toFile()
+                val ktFile = Paths.get(projectDir.root.canonicalPath, "build/$CANDIDKT_TASK_DESTINATION_PREFIX/main", "tld/d/etc", "${didName}.did.kt").toFile()
+                val otherKtFile = Paths.get(projectDir.root.canonicalPath, "build/$CANDIDKT_TASK_DESTINATION_PREFIX/main", "tld/d/etc", "other-greet.did.kt").toFile()
                 buildFile.appendText("""
                     candid {
                         sourceSets.main.candid.srcDir 'src/other/candid'
@@ -102,7 +102,7 @@ class CandidKtPluginSpec : FreeSpec({
             "positive executing 'gradle generateIntegTestCandidKt'" - {
                 val taskName = "generateIntegTestCandidKt"
                 val didFile = createDidFile(projectDir.root, didName, "src", "integTest", "candid")
-                val ktFile = Paths.get(projectDir.root.canonicalPath, "build/$CANDIDKT_TASK_DESTINATION_PREFIX/integTest", didName.capitalize(), "${didName}.did.kt").toFile()
+                val ktFile = Paths.get(projectDir.root.canonicalPath, "build/$CANDIDKT_TASK_DESTINATION_PREFIX/integTest", "${didName}.did.kt").toFile()
                 buildFile.appendText("""
                     candid {
                         sourceSets {

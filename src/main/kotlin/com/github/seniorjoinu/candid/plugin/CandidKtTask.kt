@@ -30,12 +30,11 @@ abstract class CandidKtTask : SourceTask() {
         val destinationDir = sourceSet.candid.destinationDirectory.asFile.get()
 
         didFiles.forEach { didFile ->
-            val destinationFile = File(destinationDir, didFile.nameWithoutExtension.split('-').joinToString("") { it.capitalize() })
             val packageName = getPackageName(didFile)
             logger.lifecycle("$prettyTag pkgName :: $packageName")
             logger.lifecycle("$prettyTag didPath :: $didFile")
-            logger.lifecycle("$prettyTag genPath :: $destinationFile")
-            CandidCodeGenerator.generateFor(didFile.toPath(), destinationFile.toPath(), packageName)
+            logger.lifecycle("$prettyTag genPath :: $destinationDir")
+            CandidCodeGenerator.generateFor(didFile.toPath(), destinationDir.toPath(), packageName)
         }
     }
 
