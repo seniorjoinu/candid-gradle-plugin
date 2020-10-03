@@ -1,45 +1,47 @@
 [![](https://jitci.com/gh/seniorjoinu/candid-kt-gradle-plugin/svg)](https://jitci.com/gh/seniorjoinu/candid-kt-gradle-plugin)
+[![Build Status](https://travis-ci.org/tglaeser/candid-kt-gradle-plugin.svg?branch=master)](https://travis-ci.org/tglaeser/candid-kt-gradle-plugin)
 
-### Candid-kt Gradle plugin
-
+### Candid-kt Gradle Plugin
 Enables [candid-kt](https://github.com/seniorjoinu/candid-kt) into Gradle pipeline 
 
-#### Install
-
-```groovy
-// build.gradle
-
+#### Build Configuration
+```kotlin
+// build.gradle.kts
 buildscript {
     repositories {
-        ...
         maven { setUrl("https://dl.bintray.com/hotkeytlt/maven") }
         maven { setUrl("https://jitpack.io") }
-        ...
     }
 }
 
 plugins {
-  ...
-  id 'com.github.seniorjoinu.candid' version '0.1-rc9'
-  ...
+  id("com.github.seniorjoinu.candid") version "0.1-rc24"
 }
-...
+
 repositories {
-    ...
     maven { setUrl("https://dl.bintray.com/hotkeytlt/maven") }
     maven { setUrl("https://jitpack.io") }
-    ...
 }
-...
+
 candid {
-  didPath = "path to the did file"
-  genPath = "path to the generated kotlin file"
-  genPackage = "package of the generated kotlin file"
+    sourceSets {
+        main {
+            candid {
+                srcDir("path to the did files")
+            }
+        }
+    }
+    genPackage = "package of the generated kotlin file"
 }
 ```
 
-#### Usage
+#### Build
+```
+$ gradle generateCandidKt
+```
 
-This command will generate a .kt file in the specified directory with everything you need to interact with your canisters
-
-`gradle generateCandidKt`
+#### More Information
+```
+$ gradle tasks
+$ gradle help --task generateCandidKt
+```

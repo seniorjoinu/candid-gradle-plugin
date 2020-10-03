@@ -40,8 +40,8 @@ class CandidKtPluginSpec : FreeSpec({
                 val result = build(projectDir.root, arguments)
                 result.task(":$taskName")?.outcome shouldBe TaskOutcome.SUCCESS
                 result.output shouldContain "${CANDIDKT_GROUP_NAME.capitalize()} tasks"
-                result.output shouldContain "$CANDIDKT_TASK_NAME - Generates Kotlin source files from the 'main' source set Candid language files."
-                result.output shouldContain "generateTestCandidKt - Generates Kotlin source files from the 'test' source set Candid language files."
+                result.output shouldContain "$CANDIDKT_TASK_NAME - Generates Kotlin sources from Candid language files resolved from the 'main' Candid source set."
+                result.output shouldContain "generateTestCandidKt - Generates Kotlin sources from Candid language files resolved from the 'test' Candid source set."
             }
             "positive executing 'gradle help --task generateCandidKt'" - {
                 val taskName = "help"
@@ -50,13 +50,13 @@ class CandidKtPluginSpec : FreeSpec({
                 result.task(":$taskName")?.outcome shouldBe TaskOutcome.SUCCESS
                 result.output shouldContain "Detailed task information for $CANDIDKT_TASK_NAME"
                 result.output shouldContain "Path${System.lineSeparator()}     :$CANDIDKT_TASK_NAME"
-                result.output shouldContain "Description${System.lineSeparator()}     Generates Kotlin source files from the 'main' source set Candid language files."
+                result.output shouldContain "Description${System.lineSeparator()}     Generates Kotlin sources from Candid language files resolved from the 'main' Candid source set."
                 result.output shouldContain "Group${System.lineSeparator()}     $CANDIDKT_GROUP_NAME"
             }
             "positive executing 'gradle generateCandidKt' with defaults" - {
                 val didFile = createDidFile(projectDir.root, didName, "src", "main", "candid")
                 val ktFile = Paths.get(projectDir.root.canonicalPath, "build/$CANDIDKT_TASK_DESTINATION_PREFIX/main", "${didName}.did.kt").toFile()
-                val arguments = listOf(CANDIDKT_TASK_NAME, "--warning-mode", "all")
+                val arguments = listOf(CANDIDKT_TASK_NAME, "--info", "--warning-mode", "all")
                 val result = build(projectDir.root, arguments)
                 result.task(":$CANDIDKT_TASK_NAME")?.outcome shouldBe TaskOutcome.SUCCESS
                 ktFile.shouldExist()
@@ -72,7 +72,7 @@ class CandidKtPluginSpec : FreeSpec({
                         genPackage = "$packageName"
                     }
                 """.trimIndent())
-                val arguments = listOf(CANDIDKT_TASK_NAME, "--warning-mode", "all")
+                val arguments = listOf(CANDIDKT_TASK_NAME, "--info", "--warning-mode", "all")
                 val result = build(projectDir.root, arguments)
                 result.task(":$CANDIDKT_TASK_NAME")?.outcome shouldBe TaskOutcome.SUCCESS
                 ktFile.shouldExist()
@@ -89,7 +89,7 @@ class CandidKtPluginSpec : FreeSpec({
                         sourceSets.main.candid.srcDir 'src/other/candid'
                     }
                 """.trimIndent())
-                val arguments = listOf(CANDIDKT_TASK_NAME, "--warning-mode", "all")
+                val arguments = listOf(CANDIDKT_TASK_NAME, "--info", "--warning-mode", "all")
                 val result = build(projectDir.root, arguments)
                 result.task(":$CANDIDKT_TASK_NAME")?.outcome shouldBe TaskOutcome.SUCCESS
                 ktFile.shouldExist()
@@ -110,7 +110,7 @@ class CandidKtPluginSpec : FreeSpec({
                         }
                     }
                 """.trimIndent())
-                val arguments = listOf(taskName, "--warning-mode", "all")
+                val arguments = listOf(taskName, "--info", "--warning-mode", "all")
                 val result = build(projectDir.root, arguments)
                 result.task(":$taskName")?.outcome shouldBe TaskOutcome.SUCCESS
                 ktFile.shouldExist()
