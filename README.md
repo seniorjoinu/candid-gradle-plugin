@@ -20,7 +20,7 @@ buildscript {
 
 plugins {
   ...
-  id 'com.github.seniorjoinu.candid' version '0.1-rc9'
+  id 'com.github.seniorjoinu.candid' version '0.1-rc24'
   ...
 }
 ...
@@ -32,9 +32,14 @@ repositories {
 }
 ...
 candid {
-  didPath = "path to the did file"
-  genPath = "path to the generated kotlin file"
-  genPackage = "package of the generated kotlin file"
+    sourceSets {
+        main {
+            candid {
+                srcDir "path to the did files"
+            }
+        }
+    }
+    genPackage = "package of the generated kotlin file"
 }
 ```
 
