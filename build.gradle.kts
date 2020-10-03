@@ -2,6 +2,7 @@ plugins {
     id("com.gradle.plugin-publish") version "0.12.0"
     `java-gradle-plugin`
     kotlin("jvm") version "1.3.72"
+    `project-report`
 }
 
 group = "com.github.seniorjoinu"
@@ -24,7 +25,9 @@ repositories {
 
 dependencies {
     implementation("com.github.seniorjoinu:candid-kt:0.1-rc24")
-    implementation(kotlin("stdlib-jdk8", "1.3.72"))
+    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8") { version { strictly("1.3.72") } }
+    implementation("org.jetbrains.kotlin:kotlin-stdlib") { version { strictly("1.3.72") } }
+    implementation("org.jetbrains.kotlin:kotlin-stdlib-common") { version { strictly("1.3.72") } }
 
     testImplementation("org.junit.jupiter:junit-jupiter:5.7.0-M1")
     testImplementation("io.kotest:kotest-runner-junit5:4.2.5")
