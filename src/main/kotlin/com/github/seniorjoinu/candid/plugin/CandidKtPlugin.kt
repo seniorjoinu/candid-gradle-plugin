@@ -42,7 +42,7 @@ abstract class CandidKtPlugin : Plugin<Project> {
         // Add a task that uses configuration from the extension object
         val taskName = if (sourceSetName == CandidSourceSet.SOURCE_SET_NAME_MAIN) CANDIDKT_TASK_NAME else CANDIDKT_TASK_NAME.replace("generate", "generate${sourceSetName.capitalize()}")
         project.tasks.register(taskName, CandidKtTask::class.java) { candidKtTask ->
-            candidKtTask.description = "Generates Kotlin source files from the '$sourceSetName' source set Candid language files."
+            candidKtTask.description = "Generates Kotlin sources from Candid language files resolved from the '$sourceSetName' Candid source set."
             candidKtTask.group = CANDIDKT_GROUP_NAME
             candidKtTask.sourceSetName = sourceSetName
             candidKtTask.genPackage.set(genPackage)
