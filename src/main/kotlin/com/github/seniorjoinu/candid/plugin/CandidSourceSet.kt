@@ -89,4 +89,4 @@ internal class DefaultCandidSourceSet(
     override fun toString(): String = "Candid '$name' source set"
 }
 
-private fun createDefaultSourceDirectorySet(project: Project, name: String?): SourceDirectorySet = project.objects.sourceDirectorySet(name, name)
+private fun createDefaultSourceDirectorySet(project: Project, name: String): SourceDirectorySet = project.objects.sourceDirectorySet(name, name)
