@@ -22,24 +22,19 @@ abstract class CandidKtPlugin : Plugin<Project> {
             sourceSets = candidSourceSetContainer(candidSourceSetFactory(project))
         }
 
-        val mainSourceSet = configureSourceSet(project, CandidSourceSet.SOURCE_SET_NAME_MAIN)
-        val testSourceSet = configureSourceSet(project, CandidSourceSet.SOURCE_SET_NAME_TEST)
+        // Add the 'main' candid source set
+        project.candidExtension.sourceSets.maybeCreate(CandidSourceSet.SOURCE_SET_NAME_MAIN)
 
-        project.afterEvaluate {
-            project.candidExtension.sourceSets.filter { it != mainSourceSet && it != testSourceSet }.forEach {
-                configureSourceSet(project, it.name)
-            }
+        // Add a task for each source set using the configuration from the extension object
+        project.candidExtension.sourceSets.all {
+            registerSourceTask(project, it.name)
         }
     }
 
-    internal open fun candidSourceSetFactory(project: Project): NamedDomainObjectFactory<CandidSourceSet> =
-            DefaultCandidSourceSetFactory(project)
+    private fun candidSourceSetFactory(project: Project): NamedDomainObjectFactory<CandidSourceSet> = DefaultCandidSourceSetFactory(project)
 
-    private fun configureSourceSet(project: Project, sourceSetName: String): CandidSourceSet = with(project.candidExtension) {
-        // Add a source set that uses configuration from the extension object
-        val sourceSet = sourceSets.maybeCreate(sourceSetName)
-
-        // Add a task that uses configuration from the extension object
+    private fun registerSourceTask(project: Project, sourceSetName: String) = with(project.candidExtension) {
+        val sourceSet = project.candidExtension.sourceSets.getByName(sourceSetName)
         val taskName = if (sourceSetName == CandidSourceSet.SOURCE_SET_NAME_MAIN) CANDIDKT_TASK_NAME else CANDIDKT_TASK_NAME.replace("generate", "generate${sourceSetName.capitalize()}")
         project.tasks.register(taskName, CandidKtTask::class.java) { candidKtTask ->
             candidKtTask.description = "Generates Kotlin sources from Candid language files resolved from the '$sourceSetName' Candid source set."
@@ -50,6 +45,5 @@ abstract class CandidKtPlugin : Plugin<Project> {
             candidKtTask.source(sourceSet.candid)
             candidKtTask.didFiles += sourceSet.candid
         }
-        return sourceSet
     }
 }

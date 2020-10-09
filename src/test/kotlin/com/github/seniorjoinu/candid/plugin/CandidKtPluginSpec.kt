@@ -32,6 +32,11 @@ class CandidKtPluginSpec : FreeSpec({
                 plugins {
                     id 'com.github.seniorjoinu.candid'
                 }
+                candid {
+                    sourceSets {
+                        test
+                    }
+                }
             """.trimIndent())
             buildFile.appendText(System.lineSeparator())
             "positive executing 'gradle tasks'" - {

@@ -25,7 +25,6 @@ interface CandidSourceSet : Named {
 
     companion object {
         const val SOURCE_SET_NAME_MAIN = "main"
-        const val SOURCE_SET_NAME_TEST = "test"
     }
 }
 
