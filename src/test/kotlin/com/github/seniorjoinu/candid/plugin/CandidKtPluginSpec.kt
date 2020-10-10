@@ -32,6 +32,11 @@ class CandidKtPluginSpec : FreeSpec({
                 plugins {
                     id 'com.github.seniorjoinu.candid'
                 }
+                candid {
+                    sourceSets {
+                        test
+                    }
+                }
             """.trimIndent())
             buildFile.appendText(System.lineSeparator())
             "positive executing 'gradle tasks'" - {
@@ -39,31 +44,31 @@ class CandidKtPluginSpec : FreeSpec({
                 val arguments = listOf(taskName)
                 val result = build(projectDir.root, arguments)
                 result.task(":$taskName")?.outcome shouldBe TaskOutcome.SUCCESS
-                result.output shouldContain "${CANDIDKT_GROUP_NAME.capitalize()} tasks"
-                result.output shouldContain "$CANDIDKT_TASK_NAME - Generates Kotlin sources from Candid language files resolved from the 'main' Candid source set."
-                result.output shouldContain "generateTestCandidKt - Generates Kotlin sources from Candid language files resolved from the 'test' Candid source set."
+                result.output shouldContain "${CANDID_GROUP_NAME.capitalize()} tasks"
+                result.output shouldContain "$CANDID_TASK_NAME - Generates Kotlin sources from Candid language files resolved from the 'main' Candid source set."
+                result.output shouldContain "generateTestCandid - Generates Kotlin sources from Candid language files resolved from the 'test' Candid source set."
             }
-            "positive executing 'gradle help --task generateCandidKt'" - {
+            "positive executing 'gradle help --task generateCandid'" - {
                 val taskName = "help"
-                val arguments = listOf(taskName, "--task", CANDIDKT_TASK_NAME)
+                val arguments = listOf(taskName, "--task", CANDID_TASK_NAME)
                 val result = build(projectDir.root, arguments)
                 result.task(":$taskName")?.outcome shouldBe TaskOutcome.SUCCESS
-                result.output shouldContain "Detailed task information for $CANDIDKT_TASK_NAME"
-                result.output shouldContain "Path${System.lineSeparator()}     :$CANDIDKT_TASK_NAME"
+                result.output shouldContain "Detailed task information for $CANDID_TASK_NAME"
+                result.output shouldContain "Path${System.lineSeparator()}     :$CANDID_TASK_NAME"
                 result.output shouldContain "Description${System.lineSeparator()}     Generates Kotlin sources from Candid language files resolved from the 'main' Candid source set."
-                result.output shouldContain "Group${System.lineSeparator()}     $CANDIDKT_GROUP_NAME"
+                result.output shouldContain "Group${System.lineSeparator()}     $CANDID_GROUP_NAME"
             }
-            "positive executing 'gradle generateCandidKt' with defaults" - {
+            "positive executing 'gradle generateCandid' with defaults" - {
                 val didFile = createDidFile(projectDir.root, didName, "src", "main", "candid")
-                val ktFile = Paths.get(projectDir.root.canonicalPath, "build/$CANDIDKT_TASK_DESTINATION_PREFIX/main", "${didName}.did.kt").toFile()
-                val arguments = listOf(CANDIDKT_TASK_NAME, "--info", "--warning-mode", "all")
+                val ktFile = Paths.get(projectDir.root.canonicalPath, "build/$CANDID_DESTINATION_PREFIX_KOTLIN/main", "${didName}.did.kt").toFile()
+                val arguments = listOf(CANDID_TASK_NAME, "--info", "--warning-mode", "all")
                 val result = build(projectDir.root, arguments)
-                result.task(":$CANDIDKT_TASK_NAME")?.outcome shouldBe TaskOutcome.SUCCESS
+                result.task(":$CANDID_TASK_NAME")?.outcome shouldBe TaskOutcome.SUCCESS
                 ktFile.shouldExist()
                 ktFile.shouldNotHaveFileSize(0)
                 didFile.delete()
             }
-            "positive executing 'gradle generateCandidKt' with reconfigured destination directory" - {
+            "positive executing 'gradle generateCandid' with reconfigured destination directory" - {
                 val didFile = createDidFile(projectDir.root, didName, "src", "main", "candid")
                 val ktFile = Paths.get(projectDir.root.canonicalPath, "build/output", packageName.replace('.', '/'), "${didName}.did.kt").toFile()
                 buildFile.appendText("""
@@ -72,26 +77,26 @@ class CandidKtPluginSpec : FreeSpec({
                         genPackage = "$packageName"
                     }
                 """.trimIndent())
-                val arguments = listOf(CANDIDKT_TASK_NAME, "--info", "--warning-mode", "all")
+                val arguments = listOf(CANDID_TASK_NAME, "--info", "--warning-mode", "all")
                 val result = build(projectDir.root, arguments)
-                result.task(":$CANDIDKT_TASK_NAME")?.outcome shouldBe TaskOutcome.SUCCESS
+                result.task(":$CANDID_TASK_NAME")?.outcome shouldBe TaskOutcome.SUCCESS
                 ktFile.shouldExist()
                 ktFile.shouldNotHaveFileSize(0)
                 didFile.delete()
             }
-            "positive executing 'gradle generateCandidKt' with nested did files under different source directories" - {
+            "positive executing 'gradle generateCandid' with nested did files under different source directories" - {
                 val didFile = createDidFile(projectDir.root, didName, "src", "main", "candid", "tld", "d", "etc")
                 val otherDidFile = createDidFile(projectDir.root, "other-greet", "src", "other", "candid", "tld", "d", "etc")
-                val ktFile = Paths.get(projectDir.root.canonicalPath, "build/$CANDIDKT_TASK_DESTINATION_PREFIX/main", "tld/d/etc", "${didName}.did.kt").toFile()
-                val otherKtFile = Paths.get(projectDir.root.canonicalPath, "build/$CANDIDKT_TASK_DESTINATION_PREFIX/main", "tld/d/etc", "other-greet.did.kt").toFile()
+                val ktFile = Paths.get(projectDir.root.canonicalPath, "build/$CANDID_DESTINATION_PREFIX_KOTLIN/main", "tld/d/etc", "${didName}.did.kt").toFile()
+                val otherKtFile = Paths.get(projectDir.root.canonicalPath, "build/$CANDID_DESTINATION_PREFIX_KOTLIN/main", "tld/d/etc", "other-greet.did.kt").toFile()
                 buildFile.appendText("""
                     candid {
                         sourceSets.main.candid.srcDir 'src/other/candid'
                     }
                 """.trimIndent())
-                val arguments = listOf(CANDIDKT_TASK_NAME, "--info", "--warning-mode", "all")
+                val arguments = listOf(CANDID_TASK_NAME, "--info", "--warning-mode", "all")
                 val result = build(projectDir.root, arguments)
-                result.task(":$CANDIDKT_TASK_NAME")?.outcome shouldBe TaskOutcome.SUCCESS
+                result.task(":$CANDID_TASK_NAME")?.outcome shouldBe TaskOutcome.SUCCESS
                 ktFile.shouldExist()
                 otherKtFile.shouldExist()
                 ktFile.shouldNotHaveFileSize(0)
@@ -99,10 +104,10 @@ class CandidKtPluginSpec : FreeSpec({
                 didFile.delete()
                 otherDidFile.delete()
             }
-            "positive executing 'gradle generateIntegTestCandidKt'" - {
-                val taskName = "generateIntegTestCandidKt"
+            "positive executing 'gradle generateIntegTestCandid'" - {
+                val taskName = "generateIntegTestCandid"
                 val didFile = createDidFile(projectDir.root, didName, "src", "integTest", "candid")
-                val ktFile = Paths.get(projectDir.root.canonicalPath, "build/$CANDIDKT_TASK_DESTINATION_PREFIX/integTest", "${didName}.did.kt").toFile()
+                val ktFile = Paths.get(projectDir.root.canonicalPath, "build/$CANDID_DESTINATION_PREFIX_KOTLIN/integTest", "${didName}.did.kt").toFile()
                 buildFile.appendText("""
                     candid {
                         sourceSets {

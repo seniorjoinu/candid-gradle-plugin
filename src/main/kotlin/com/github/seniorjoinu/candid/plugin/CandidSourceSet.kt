@@ -10,7 +10,7 @@ import org.gradle.util.ConfigureUtil
 import java.io.File
 
 internal val Project.candidExtension: CandidKtExtension
-    get() = extensions.getByName(CANDIDKT_EXTENSION_NAME) as CandidKtExtension
+    get() = extensions.getByName(CANDID_EXTENSION_NAME) as CandidKtExtension
 
 interface CandidSourceSetContainer {
     val sourceSets: NamedDomainObjectContainer<CandidSourceSet>
@@ -20,12 +20,13 @@ interface CandidSourceSet : Named {
     val candid: SourceDirectorySet
     fun candid(configureClosure: Closure<Any?>): SourceDirectorySet
 
+    val taskName: String
+
     fun dependsOn(other: CandidSourceSet)
     val dependsOn: Set<CandidSourceSet>
 
     companion object {
         const val SOURCE_SET_NAME_MAIN = "main"
-        const val SOURCE_SET_NAME_TEST = "test"
     }
 }
 
@@ -69,13 +70,15 @@ internal class DefaultCandidSourceSet(
 
     override val candid: SourceDirectorySet = createDefaultSourceDirectorySet(project, name).apply {
         filter.include("**/*.did")
-        destinationDirectory.fileValue(project.buildDir.resolve("$CANDIDKT_TASK_DESTINATION_PREFIX/$name"))
+        destinationDirectory.fileValue(project.buildDir.resolve("$CANDID_DESTINATION_PREFIX_KOTLIN/$name"))
     }
 
 
     override fun candid(configureClosure: Closure<Any?>): SourceDirectorySet = candid.apply { ConfigureUtil.configure(configureClosure, this) }
 
     override fun getName(): String = displayName
+
+    override val taskName = if (name == CandidSourceSet.SOURCE_SET_NAME_MAIN) CANDID_TASK_NAME else CANDID_TASK_NAME.replace("generate", "generate${name.capitalize()}")
 
     override fun dependsOn(other: CandidSourceSet) {
         dependsOnSourceSetsImpl.add(other)
