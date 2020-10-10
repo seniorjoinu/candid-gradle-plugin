@@ -14,6 +14,6 @@ class CandidKtPluginTest {
         project.gradle.startParameter.isOffline = true
 
         project.pluginManager.apply("com.github.seniorjoinu.candid")
-        assert(project.tasks.getByName(CANDIDKT_TASK_NAME) is CandidKtTask)
+        assert(project.tasks.getByName(CANDID_TASK_NAME) is CandidKtTask)
     }
 }

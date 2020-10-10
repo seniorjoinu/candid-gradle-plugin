@@ -4,10 +4,10 @@ import org.gradle.api.NamedDomainObjectFactory
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 
-const val CANDIDKT_EXTENSION_NAME = "candid"
-const val CANDIDKT_GROUP_NAME = "candid"
-const val CANDIDKT_TASK_NAME = "generateCandidKt"
-const val CANDIDKT_TASK_DESTINATION_PREFIX = "generated/sources/candid/kotlin"
+const val CANDID_EXTENSION_NAME = "candid"
+const val CANDID_GROUP_NAME = "candid"
+const val CANDID_TASK_NAME = "generateCandid"
+const val CANDID_DESTINATION_PREFIX_KOTLIN = "generated/sources/candid/kotlin"
 
 /**
  * The Candid to Kotlin plugin.
@@ -15,7 +15,7 @@ const val CANDIDKT_TASK_DESTINATION_PREFIX = "generated/sources/candid/kotlin"
 abstract class CandidKtPlugin : Plugin<Project> {
     override fun apply(project: Project) {
         // Add the extension object
-        project.extensions.create(CANDIDKT_EXTENSION_NAME, CandidKtExtension::class.java, project)
+        project.extensions.create(CANDID_EXTENSION_NAME, CandidKtExtension::class.java, project)
         project.candidExtension.apply {
             fun candidSourceSetContainer(factory: NamedDomainObjectFactory<CandidSourceSet>) = project.container(CandidSourceSet::class.java, factory)
 
@@ -35,10 +35,9 @@ abstract class CandidKtPlugin : Plugin<Project> {
 
     private fun registerSourceTask(project: Project, sourceSetName: String) = with(project.candidExtension) {
         val sourceSet = project.candidExtension.sourceSets.getByName(sourceSetName)
-        val taskName = if (sourceSetName == CandidSourceSet.SOURCE_SET_NAME_MAIN) CANDIDKT_TASK_NAME else CANDIDKT_TASK_NAME.replace("generate", "generate${sourceSetName.capitalize()}")
-        project.tasks.register(taskName, CandidKtTask::class.java) { candidKtTask ->
+        project.tasks.register(sourceSet.taskName, CandidKtTask::class.java) { candidKtTask ->
             candidKtTask.description = "Generates Kotlin sources from Candid language files resolved from the '$sourceSetName' Candid source set."
-            candidKtTask.group = CANDIDKT_GROUP_NAME
+            candidKtTask.group = CANDID_GROUP_NAME
             candidKtTask.sourceSetName = sourceSetName
             candidKtTask.genPackage.set(genPackage)
             candidKtTask.sourceSet.takeIf { it != sourceSet }?.dependsOn(sourceSet)
