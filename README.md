@@ -1,6 +1,6 @@
 [![Build Status](https://travis-ci.org/seniorjoinu/candid-kt-gradle-plugin.svg?branch=master)](https://travis-ci.org/seniorjoinu/candid-kt-gradle-plugin)
 
-### Candid-kt Gradle Plugin
+### Candid Gradle Plugin
 Enables [candid-kt](https://github.com/seniorjoinu/candid-kt) into Gradle pipeline 
 
 #### Build Configuration
