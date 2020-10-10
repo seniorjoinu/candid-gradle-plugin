@@ -36,11 +36,11 @@ candid {
 
 #### Build
 ```
-$ gradle generateCandidKt
+$ gradle generateCandid
 ```
 
 #### More Information
 ```
 $ gradle tasks
-$ gradle help --task generateCandidKt
+$ gradle help --task generateCandid
 ```
