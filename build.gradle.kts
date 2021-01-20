@@ -30,9 +30,9 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib-common") { version { strictly("1.4.20") } }
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8") { version { strictly("1.4.20") } }
 
-    testImplementation("org.junit.jupiter:junit-jupiter:5.7.0-M1")
-    testImplementation("io.kotest:kotest-runner-junit5:4.2.5")
-    testImplementation("io.kotest:kotest-assertions-core:4.2.5")
+    testImplementation("io.kotest:kotest-assertions-core:4.3.2")
+    testImplementation("io.kotest:kotest-runner-junit5:4.3.2")
+    testImplementation("org.junit.jupiter:junit-jupiter:5.7.0")
 }
 
 tasks.test {
