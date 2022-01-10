@@ -1,13 +1,13 @@
 package com.github.seniorjoinu.candid.plugin
 
-import groovy.lang.Closure
+import org.gradle.api.Action
 import org.gradle.api.Named
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.NamedDomainObjectFactory
 import org.gradle.api.Project
 import org.gradle.api.file.SourceDirectorySet
-import org.gradle.util.ConfigureUtil
 import java.io.File
+import java.util.Locale
 
 internal val Project.candidExtension: CandidKtExtension
     get() = extensions.getByName(CANDID_EXTENSION_NAME) as CandidKtExtension
@@ -18,7 +18,7 @@ interface CandidSourceSetContainer {
 
 interface CandidSourceSet : Named {
     val candid: SourceDirectorySet
-    fun candid(configureClosure: Closure<Any?>): SourceDirectorySet
+    fun candid(action: Action<Any?>): SourceDirectorySet
 
     val taskName: String
 
@@ -74,11 +74,11 @@ internal class DefaultCandidSourceSet(
     }
 
 
-    override fun candid(configureClosure: Closure<Any?>): SourceDirectorySet = candid.apply { ConfigureUtil.configure(configureClosure, this) }
+    override fun candid(action: Action<Any?>): SourceDirectorySet = candid.apply { action.execute(this) }
 
     override fun getName(): String = displayName
 
-    override val taskName = if (name == CandidSourceSet.SOURCE_SET_NAME_MAIN) CANDID_TASK_NAME else CANDID_TASK_NAME.replace("generate", "generate${name.capitalize()}")
+    override val taskName = if (name == CandidSourceSet.SOURCE_SET_NAME_MAIN) CANDID_TASK_NAME else CANDID_TASK_NAME.replace("generate", "generate${name.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }}")
 
     override fun dependsOn(other: CandidSourceSet) {
         dependsOnSourceSetsImpl.add(other)
