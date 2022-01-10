@@ -1,12 +1,12 @@
 plugins {
-    id("com.gradle.plugin-publish") version "0.12.0"
-    `java-gradle-plugin`
-    kotlin("jvm") version "1.4.20"
     `project-report`
+    `java-gradle-plugin`
+    kotlin("jvm") version embeddedKotlinVersion
+    id("com.gradle.plugin-publish") version "0.18.0"
 }
 
 group = "com.github.seniorjoinu"
-version = "0.1-rc24"
+version = "0.1-rc25"
 
 gradlePlugin {
     plugins {
@@ -20,15 +20,14 @@ gradlePlugin {
 repositories {
     mavenCentral()
     maven { setUrl("https://jitpack.io") }
-    maven { setUrl("https://dl.bintray.com/hotkeytlt/maven") }
 }
 
 dependencies {
-    implementation("com.github.seniorjoinu:candid-kt:0.1-rc24")
-    implementation("org.jetbrains.kotlin:kotlin-reflect") { version { strictly("1.4.20") } }
-    implementation("org.jetbrains.kotlin:kotlin-stdlib") { version { strictly("1.4.20") } }
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-common") { version { strictly("1.4.20") } }
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8") { version { strictly("1.4.20") } }
+    implementation("com.github.seniorjoinu:candid-kt:0.1-rc25-2")
+    implementation("org.jetbrains.kotlin:kotlin-reflect") { version { strictly(embeddedKotlinVersion) } }
+    implementation("org.jetbrains.kotlin:kotlin-stdlib") { version { strictly(embeddedKotlinVersion) } }
+    implementation("org.jetbrains.kotlin:kotlin-stdlib-common") { version { strictly(embeddedKotlinVersion) } }
+    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8") { version { strictly(embeddedKotlinVersion) } }
 
     testImplementation("io.kotest:kotest-assertions-core:4.3.2")
     testImplementation("io.kotest:kotest-runner-junit5:4.3.2")
